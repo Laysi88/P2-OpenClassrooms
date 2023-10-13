@@ -1,16 +1,16 @@
 import csv
 from datetime import datetime
-from models import ScraperBookModel
+from models import ScrapperBookModel
 import time
 
 
-class ScraperBookController:
+class ScrapperBookController:
     def __init__(self, model, view):
         self.model = model
         self.view = view
 
     def run(self):
-        self.model.scrape_data()
+        self.model.scrappe_data()
         data_dict = self.model.get_book_data()
         if data_dict:
             title = data_dict.get("title", "book_data")
@@ -31,43 +31,19 @@ class ScraperBookController:
 
 
 class ScrapperCategoryController:
-    def __init__(self, model, view):
-        self.model = model
+    def __init__(self, category_model, book_controller, view):
+        self.category_model = category_model
+        self.book_controller = book_controller
         self.view = view
 
     def run(self):
-        start_time = time.time()
-        book_data_list = self.model.get_category_data()
-        end_time = time.time()
-        if book_data_list:
-            all_book_data = []
-            for book_url in book_data_list:
-                book_model = ScraperBookModel(book_url, self, self.view)
-                book_model.scrape_data()
-                data_dict = book_model.get_book_data()
-
-                if data_dict:
-                    all_book_data.append(data_dict)
-
-            if all_book_data:
-                category_name = all_book_data[0].get("category", "category_data")
-                current_date = datetime.now().strftime("%Y-%m-%d")
-                filename = f"{category_name}_{current_date}.csv"
-
-                self.export_to_csv(all_book_data, filename)
-                self.view.display_success_message()
-            else:
-                self.view.display_failure_message()
+        book_urls = self.category_model.get_category_data()
+        print(book_urls)
+        if book_urls:
+            for url in book_urls:
+                book_model = ScrapperBookModel(url, self.book_controller)
+                book_controller = ScrapperBookController(book_model, self.view)
+                book_controller.run()
+            self.display_success_message()
         else:
-            self.view.display_failure_message()
-
-        scrapping_time = end_time - start_time
-        self.view.display_scrapping_time(scrapping_time)
-
-    def export_to_csv(self, data_list, filename):
-        with open(filename, "w", newline="") as csv_file:
-            fieldnames = data_list[0].keys()
-            writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-            writer.writeheader()
-            for data_dict in data_list:
-                writer.writerow(data_dict)
+            self.display_failure_message()

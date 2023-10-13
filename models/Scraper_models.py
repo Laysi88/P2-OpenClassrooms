@@ -3,14 +3,13 @@ import requests
 from urllib.parse import urljoin
 
 
-class ScraperBookModel:
-    def __init__(self, url, controller, view):
+class ScrapperBookModel:
+    def __init__(self, url, controller):
         self.url = url
         self.data = None
         self.controller = controller
-        self.view = view
 
-    def scrape_data(self):
+    def scrappe_data(self):
         response = requests.get(self.url)
         html = response.content
         soup = bs(html, "lxml")
@@ -98,10 +97,10 @@ class ScrapperCategoryModel:
                     book_url = a_tag["href"]
                     full_url = self.base_url + book_url[9:]
                     self.book_data_list.append(full_url)
-
             next_page_element = soup.select("li.next > a")
             if next_page_element:
                 next_page_url = next_page_element[0].get("href")
                 url = urljoin(url, next_page_url)
             else:
                 break
+        return self.book_data_list

@@ -1,23 +1,11 @@
-from models import ScraperBookModel, ScrapperCategoryModel
+from models import ScrapperCategoryModel, ScrapperBookModel
 from views import ScraperView
-from controllers import ScraperBookController, ScrapperCategoryController
+from controllers import ScrapperCategoryController, ScrapperBookController
 
-choice = input("Choisissez 'book' ou 'category': ")
+url = input("Entrer l'url à scrapper : ")
+view = ScraperView()
 
-if choice == "book":
-    # L'utilisateur veut scraper un livre spécifique
-    url = input("Entrer l'url du livre à scrapper : ")
-    model = ScraperBookModel(url, None, None)
-    view = ScraperView()
-    controller = ScraperBookController(model, view)
-elif choice == "category":
-    # L'utilisateur veut scraper une catégorie de livres
-    category_url = input("Entrer l'url de la catégorie à scrapper : ")
-    model = ScrapperCategoryModel(category_url)
-    view = ScraperView()
-    controller = ScrapperCategoryController(model, view)
-else:
-    print("Choix invalide. Veuillez choisir 'book' ou 'category'.")
+model = ScrapperCategoryModel(url)
+controller = ScrapperCategoryController(model, None, view)
 
-if model and view and controller:
-    controller.run()
+controller.run()

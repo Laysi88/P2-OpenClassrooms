@@ -73,3 +73,36 @@ class ScraperBookModel:
             }
             return data_dict
         return None
+
+
+class ScrapperCategoryModel:
+    def __init__(self, category_url):
+        self.base_url = "http://books.toscrape.com/catalogue/"
+        self.category_url = category_url
+        self.book_data_list = []
+
+    def scrape_category_data(self):
+        next_page = self.category_url
+
+        while next_page:
+            response = requests.get(next_page)
+            html = response.content
+            soup = bs(html, "lxml")
+
+            h3_elements = soup.find_all("h3")
+
+            for h3 in h3_elements:
+                a_tag = h3.find("a")
+                if a_tag and "href" in a_tag.attrs:
+                    book_url = a_tag["href"]
+                    full_url = self.base_url + book_url[9:]
+                    self.book_data_list.append(full_url)
+
+            # Trouver le lien de la page suivante (s'il existe)
+            next_page_tag = soup.find("li", class_="next")
+            if next_page_tag:
+                next_page = self.base_url + next_page_tag.find("a")["href"]
+            else:
+                next_page = None
+
+        return self.book_data_list

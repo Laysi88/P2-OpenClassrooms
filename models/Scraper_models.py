@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup as bs
 import requests
+from urllib.parse import urljoin
 
 
 class ScraperBookModel:
@@ -80,15 +81,15 @@ class ScrapperCategoryModel:
         self.base_url = "http://books.toscrape.com/catalogue/"
         self.category_url = category_url
         self.book_data_list = []
+        self.data = None
 
-    def scrape_category_data(self):
-        next_page = self.category_url
-
-        while next_page:
-            response = requests.get(next_page)
-            html = response.content
-            soup = bs(html, "lxml")
-
+    def get_category_data(self):
+        url = self.category_url
+        while True:
+            print("Début du scraping...")
+            response = requests.get(url)
+            print("Requête HTTP effectuée.")
+            soup = bs(response.text, "lxml")
             h3_elements = soup.find_all("h3")
 
             for h3 in h3_elements:
@@ -98,11 +99,9 @@ class ScrapperCategoryModel:
                     full_url = self.base_url + book_url[9:]
                     self.book_data_list.append(full_url)
 
-            # Trouver le lien de la page suivante (s'il existe)
-            next_page_tag = soup.find("li", class_="next")
-            if next_page_tag:
-                next_page = self.base_url + next_page_tag.find("a")["href"]
+            next_page_element = soup.select("li.next > a")
+            if next_page_element:
+                next_page_url = next_page_element[0].get("href")
+                url = urljoin(url, next_page_url)
             else:
-                next_page = None
-
-        return self.book_data_list
+                break

@@ -7,7 +7,7 @@ choice = input("Choisissez 'book' ou 'category': ")
 if choice == "book":
     # L'utilisateur veut scraper un livre spécifique
     url = input("Entrer l'url du livre à scrapper : ")
-    model = ScraperBookModel(url)
+    model = ScraperBookModel(url, None, None)
     view = ScraperView()
     controller = ScraperBookController(model, view)
 elif choice == "category":
@@ -17,7 +17,7 @@ elif choice == "category":
     view = ScraperView()
     controller = ScrapperCategoryController(model, view)
 else:
-    print("Choix invalide. Veuillez choisir 'scrapbook' ou 'scrapcategory'.")
+    print("Choix invalide. Veuillez choisir 'book' ou 'category'.")
 
 if model and view and controller:
     controller.run()

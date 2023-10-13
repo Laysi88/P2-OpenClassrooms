@@ -21,7 +21,7 @@ class ScraperBookModel:
             product_page_url = self.url
 
             # Obtenir l'UPC du livre
-            universal_ptoduct_code = self.data.select_one(
+            universal_product_code = self.data.select_one(
                 "table.table.table-striped th:-soup-contains('UPC') + td"
             ).text.strip()
 
@@ -59,9 +59,9 @@ class ScraperBookModel:
             image_url = self.data.select_one("div#product_gallery img")["src"]
             full_image_url = base_url + image_url[6:]
 
-            return {
+            data_dict = {
                 "product_page_url": product_page_url,
-                "universal_ptoduct_code": universal_ptoduct_code,
+                "universal_product_code": universal_product_code,
                 "title": title,
                 "price_including_tax": price_including_tax,
                 "price_excluding_tax": price_excluding_tax,
@@ -71,4 +71,5 @@ class ScraperBookModel:
                 "review_rating": review_rating,
                 "image_url": full_image_url,
             }
+            return data_dict
         return None

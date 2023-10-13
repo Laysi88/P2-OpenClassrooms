@@ -1,8 +1,8 @@
 # Bêta scrapping Book to Scrape
 
 ## Prérequis:
-IDE (exemple:VSCODE ou Pycharm ou tout autre IDE de votre choix)
-Python: disponible sur https://www.python.org/
+- IDE (exemple:VSCODE ou Pycharm ou tout autre IDE de votre choix)
+- Python: disponible sur https://www.python.org/
 
 **Marche à suivre sous Windows**
 

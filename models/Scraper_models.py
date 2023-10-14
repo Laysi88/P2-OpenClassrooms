@@ -83,9 +83,7 @@ class ScrapperCategoryModel:
     def get_category_data(self):
         url = self.category_url
         while True:
-            print("Début du scraping...")
             response = requests.get(url)
-            print("Requête HTTP effectuée.")
             soup = bs(response.text, "lxml")
             h3_elements = soup.find_all("h3")
 

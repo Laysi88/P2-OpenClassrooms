@@ -32,4 +32,9 @@ Dans votre terminal entrer la commande:
 `python main.py`
 
 ### Phase 1
-    Entrer l'url de la page du livre que vous voulez scrapper
+ - Choississez si vous voulez scrapper un livre en indiquand la lettre "l"
+ - Entrez l'url de la page du livre
+
+### Phase 2 
+ - Choississez si vous voulez scrapper un livre en indiquand la lettre "l" ou une categorie avec "c"
+ - Entrez l'url de la page du livre pour "l" ou l'url de la page de la catégorie pour "c".Attention certaines catégories peuvent contenir plusieurs page: toujours prendre l'url de la première page. 

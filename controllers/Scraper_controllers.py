@@ -66,7 +66,7 @@ class ScrapperBookController:
 
     def export_to_csv(self, data, filename):
         if data:
-            with open(filename, "w", newline="") as csv_file:
+            with open(filename, "w", newline="", encoding="utf-8") as csv_file:
                 fieldnames = data[0].keys()
                 writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
                 writer.writeheader()
@@ -80,13 +80,31 @@ class ScrapperCategoryController:
 
     def run(self):
         book_urls = self.category_model.get_category_data()
-        print(book_urls)
         if book_urls:
+            book_data_list = []
+
             for url in book_urls:
                 book_model = ScrapperBookModel(url)
                 book_model.scrappe_data()
                 book_data = book_model.get_book_data()
-                print(book_data)
-            self.view.display_success_message()
+                if book_data:
+                    book_data_list.append(book_data)
+
+            if book_data_list:
+                category_name = book_data_list[0].get("category")
+                csv_filename = f"{category_name}.csv"
+
+                self.export_to_csv(book_data_list, csv_filename)
+                self.view.display_success_message()
+            else:
+                self.view.display_failure_message()
         else:
             self.view.display_failure_message()
+
+    def export_to_csv(self, data, filename):
+        if data:
+            with open(filename, "w", newline="", encoding="utf-8") as csv_file:
+                fieldnames = data[0].keys()
+                writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+                writer.writeheader()
+                writer.writerows(data)

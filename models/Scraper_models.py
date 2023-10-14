@@ -4,10 +4,9 @@ from urllib.parse import urljoin
 
 
 class ScrapperBookModel:
-    def __init__(self, url, controller):
+    def __init__(self, url):
         self.url = url
         self.data = None
-        self.controller = controller
 
     def scrappe_data(self):
         response = requests.get(self.url)
@@ -80,7 +79,6 @@ class ScrapperCategoryModel:
         self.base_url = "http://books.toscrape.com/catalogue/"
         self.category_url = category_url
         self.book_data_list = []
-        self.data = None
 
     def get_category_data(self):
         url = self.category_url

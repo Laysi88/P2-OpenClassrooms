@@ -1,6 +1,6 @@
 import csv
 from datetime import datetime
-from models import ScrapperBookModel, ScrapperCategoryModel
+from models import ScrapperBookModel, ScrapperCategoryModel, ScrapperSiteModel
 import time
 import requests, sys
 from views import ScraperView
@@ -108,3 +108,7 @@ class ScrapperCategoryController:
                 writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
                 writer.writeheader()
                 writer.writerows(data)
+
+
+class ScrapperSiteController:
+    pass

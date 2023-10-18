@@ -100,3 +100,25 @@ class ScrapperCategoryModel:
             else:
                 break
         return self.book_data_list
+
+
+class ScrapperSiteModel:
+    def __init__(self, site_url):
+        self.base_url = "http://books.toscrape.com/"
+        self.site_url = site_url
+        self.category_data_list = []
+
+    def get_site_data(self):
+        url = self.base_url
+        response = requests.get(url)
+        soup = bs(response.text, "lxml")
+        category_element = soup.select(".side_categories ul.nav-list li")
+
+        for category in category_element:
+            a_tag = category.find("a")
+            if a_tag and "href" in a_tag.attrs:
+                category_url = a_tag["href"]
+                full_url = self.base_url + category_url
+                if full_url != "http://books.toscrape.com/catalogue/category/books_1/index.html":
+                    self.category_data_list.append(full_url)
+        return self.category_data_list

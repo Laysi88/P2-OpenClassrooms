@@ -1,7 +1,5 @@
-import csv
-from datetime import datetime
 from models import ScrapperBookModel, ScrapperCategoryModel, ScrapperSiteModel
-import time
+import os, csv, string
 import requests, sys
 from views import ScraperView
 
@@ -10,7 +8,7 @@ class MainController:
     def run(self):
         while True:
             choice = (
-                input("Voulez-vous scraper un livre (L), une catégorie (C), le site(S) ou quitter (Q) ? ")
+                input("Voulez-vous scraper un livre (L), une catégorie (C), le site (S) ou quitter (Q) ? ")
                 .strip()
                 .lower()
             )
@@ -63,6 +61,11 @@ class MainController:
                 )
 
 
+def clean_filename(filename):
+    valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
+    return "".join(c if c in valid_chars else "_" for c in filename)
+
+
 class ScrapperBookController:
     def __init__(self, model, view):
         self.model = model
@@ -73,9 +76,15 @@ class ScrapperBookController:
         data_dict = self.model.get_book_data()
         if data_dict:
             title = data_dict.get("title", "book_data")
-            cleaned_title = title.replace(":", "_")
-            current_date = datetime.now().strftime("%Y-%m-%d")
-            filename = f"{cleaned_title}_{current_date}.csv"
+            cleaned_title = clean_filename(title)
+            filename = f"{cleaned_title}.csv"
+            image_url = data_dict.get("image_url")
+            if image_url:
+                script_directory = os.path.dirname(os.path.abspath(__file__))
+                parent_directory = os.path.abspath(os.path.join(script_directory, os.path.pardir))
+                image_directory = os.path.join(parent_directory, "Pictures")
+                image_filename = os.path.join(image_directory, f"{cleaned_title}_image.jpg")
+                self.download_image(image_url, image_filename)
             self.export_to_csv([data_dict], filename)
             self.view.display_success_message()
         else:
@@ -106,11 +115,18 @@ class ScrapperCategoryController:
                 book_data = book_model.get_book_data()
                 if book_data:
                     book_data_list.append(book_data)
-            print(book_data_list)
+                    title = book_data.get("title", "book_data")
+                    cleaned_title = clean_filename(title)
+                    image_url = book_data.get("image_url")
+                    if image_url:
+                        script_directory = os.path.dirname(os.path.abspath(__file__))
+                        parent_directory = os.path.abspath(os.path.join(script_directory, os.path.pardir))
+                        image_directory = os.path.join(parent_directory, "Pictures")
+                        image_filename = os.path.join(image_directory, f"{cleaned_title}_image.jpg")
+                        self.download_image(image_url, image_filename)
             if book_data_list:
                 category_name = book_data_list[0].get("category")
                 csv_filename = f"{category_name}.csv"
-
                 self.export_to_csv(book_data_list, csv_filename)
                 self.view.display_success_message()
             else:
@@ -125,6 +141,16 @@ class ScrapperCategoryController:
                 writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
                 writer.writeheader()
                 writer.writerows(data)
+
+    def download_image(self, url, filename):
+        response = requests.get(url)
+        if response.status_code == 200:
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
+            with open(filename, "wb") as file:
+                file.write(response.content)
+                self.view.display_succes_image_download_message()
+        else:
+            self.view.display_failure_image_download_message()
 
 
 class ScrapperSiteController:
@@ -158,6 +184,15 @@ class ScrapperSiteController:
                                 book_data_list = []
                             print("Scrapping en cour")
                             book_data_list.append(book_data)
+                            title = book_data.get("title", "book_data")
+                            cleaned_title = clean_filename(title)
+                            image_url = book_data.get("image_url")
+                            if image_url:
+                                script_directory = os.path.dirname(os.path.abspath(__file__))
+                                parent_directory = os.path.abspath(os.path.join(script_directory, os.path.pardir))
+                                image_directory = os.path.join(parent_directory, "Pictures")
+                                image_filename = os.path.join(image_directory, f"{cleaned_title}_image.jpg")
+                                self.download_image(image_url, image_filename)
 
                     if book_data_list:
                         csv_filename = f"{current_category}.csv"
@@ -175,3 +210,13 @@ class ScrapperSiteController:
                 writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
                 writer.writeheader()
                 writer.writerows(data)
+
+    def download_image(self, url, filename):
+        response = requests.get(url)
+        if response.status_code == 200:
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
+            with open(filename, "wb") as file:
+                file.write(response.content)
+                self.view.display_succes_image_download_message()
+        else:
+            self.view.display_failure_image_download_message()

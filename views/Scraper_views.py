@@ -5,5 +5,8 @@ class ScraperView:
     def display_failure_message(self):
         print("Échec du scraping. Aucune donnée disponible.")
 
-    def display_scrapping_time(self, scrapping_time):
-        print(f"Le scraping a pris {scrapping_time:.2f} secondes.")
+    def display_succes_image_download_message(self):
+        print("Image téléchargée avec succès")
+
+    def display_failure_image_download_message(self):
+        print("Impossible de téléchargé l'image")

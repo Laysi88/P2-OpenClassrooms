@@ -43,7 +43,12 @@ class ScrapperBookModel:
             ).text.strip()
 
             # Obtenir la description du livre
-            product_description = self.data.select_one("#product_description + p").text.strip()
+
+            product_description_text = self.data.select_one("#product_description + p")
+            if product_description_text:
+                product_description = product_description_text.text.strip()
+            else:
+                product_description = "Description non trouvée"
 
             # Obtenir la catégorie du livre
             active_li = self.data.find("li", class_="active")

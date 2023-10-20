@@ -98,6 +98,16 @@ class ScrapperBookController:
                 writer.writeheader()
                 writer.writerows(data)
 
+    def download_image(self, url, filename):
+        response = requests.get(url)
+        if response.status_code == 200:
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
+            with open(filename, "wb") as file:
+                file.write(response.content)
+                self.view.display_succes_image_download_message()
+        else:
+            self.view.display_failure_image_download_message()
+
 
 class ScrapperCategoryController:
     def __init__(self, category_model, view):

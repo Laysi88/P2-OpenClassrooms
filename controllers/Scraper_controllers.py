@@ -89,7 +89,7 @@ class ScrapperCategoryController:
                 book_data = book_model.get_book_data()
                 if book_data:
                     book_data_list.append(book_data)
-
+            print(book_data_list)
             if book_data_list:
                 category_name = book_data_list[0].get("category")
                 csv_filename = f"{category_name}.csv"
@@ -111,4 +111,22 @@ class ScrapperCategoryController:
 
 
 class ScrapperSiteController:
-    pass
+    def __init__(self, site_model, view):
+        self.site_model = site_model
+        self.view = view
+
+    def run(self):
+        category_urls = self.site_model.get_site_data()
+        if category_urls:
+            book_data_list = []
+
+            for url in category_urls:
+                book_category = ScrapperCategoryModel(url)
+                category_data = book_category.get_category_data()
+                for url in category_data:
+                    book_model = ScrapperBookModel(url)
+                    book_model.scrappe_data()
+                    book_data = book_model.get_book_data()
+
+                    print(book_data)
+                pass

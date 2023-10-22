@@ -42,5 +42,5 @@ Dans votre terminal entrer la commande:
  ### Phase 3 
  - Choississez si vous voulez scrapper un livre en indiquand la lettre "l", une categorie avec "c" ou le site avec la lettre "s"
 
- ## Phase 4 
+ ### Phase 4 
  - Les images sont enregistrées dans un dossier "Pictures" à la racine du projet
